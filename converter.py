@@ -4,9 +4,9 @@ import os
 import shutil
 import pyproj
 
-def sk42ToWgs84(x, y):
-    transformer = pyproj.Transformer.from_crs(4284, 4326)
-    lon, lat = transformer.transform(x, y)
+def ucs2000ToWgs84(x, y):
+    transformer = pyproj.Transformer.from_crs(6384, 4326)
+    lon, lat = transformer.transform(x, y, radians=False)
     return lon, lat
     
 if len(sys.argv) < 2:
@@ -29,12 +29,12 @@ for row in csv_reader:
     coords = row[3]
 
     coords = coords.split(' ')
-    coords[0] = coords[0].replace('-', '.')
-    coords[1] = coords[1].replace('-', '.')
-    x = float(coords[0])
-    y = float(coords[1])
+    coords[0] = coords[0].replace('-', '')
+    coords[1] = coords[1].replace('-', '')
+    x = int(coords[0])
+    y = int(int(coords[1]) / 10)
 
-    lon, lat = sk42ToWgs84(x, y)
+    lon, lat = ucs2000ToWgs84(x, y)
 
     sql = "INSERT INTO Data (name, description, lat, lon) VALUES ('%s', '%s', '%s', '%s');" % (name, description, lat, lon)
 
